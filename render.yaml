@@ -1,0 +1,32 @@
+# Blueprint de deploy do Render (https://render.com)
+# O Render le este arquivo, constroi o Dockerfile e sobe o servico.
+# Os valores marcados com sync:false sao preenchidos no painel do Render,
+# para que nenhuma credencial fique versionada no GitHub.
+
+services:
+  - type: web
+    name: mercado-express-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /mercado
+    autoDeploy: true
+    envVars:
+      # Porta exigida pelo checkpoint
+      - key: PORT
+        value: 8082
+
+      # Perfil ativo:
+      #   dev   -> H2 em memoria (usar quando o Oracle da FIAP bloquear IP externo)
+      #   vazio -> Oracle da FIAP
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+
+      # Credenciais do Oracle - preencher no painel (Environment), nunca aqui
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
