@@ -1,0 +1,141 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_source": "insomnia.desktop.app:v8",
+  "resources": [
+    {
+      "_id": "wrk_mercadoexpress",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "Mercado Express API - FIAP CP4",
+      "description": "Collection do Checkpoint 4 - Parte I. Base: http://localhost:8082",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_mercadoexpress",
+      "_type": "environment",
+      "parentId": "wrk_mercadoexpress",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8082",
+        "id_exemplo": 1
+      },
+      "isPrivate": false,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_01_get_all",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "1 - GET all (listar todos)",
+      "description": "Retorna todos os itens do mercado. 200 OK. Resposta em CollectionModel com _links.",
+      "method": "GET",
+      "url": "{{ base_url }}/mercado",
+      "headers": [
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {},
+      "metaSortKey": -10
+    },
+    {
+      "_id": "req_02_get_by_id",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "2 - GET by id (buscar por id)",
+      "description": "Retorna um item pelo id. 200 OK ou 404 Not Found.",
+      "method": "GET",
+      "url": "{{ base_url }}/mercado/{{ id_exemplo }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {},
+      "metaSortKey": -9
+    },
+    {
+      "_id": "req_03_post",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "3 - POST (criar)",
+      "description": "Cria um novo item. 201 Created + header Location.",
+      "method": "POST",
+      "url": "{{ base_url }}/mercado",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Sabao em Po Concentrado\",\n  \"tipo\": \"Produto de Limpeza\",\n  \"setor\": \"Limpeza\",\n  \"tamanho\": \"1kg\",\n  \"preco\": 18.90\n}"
+      },
+      "metaSortKey": -8
+    },
+    {
+      "_id": "req_04_put",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "4 - PUT (substituir)",
+      "description": "Substitui TODOS os campos do item. 200 OK.",
+      "method": "PUT",
+      "url": "{{ base_url }}/mercado/{{ id_exemplo }}",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Meia Cano Alto Esportiva\",\n  \"tipo\": \"Meia\",\n  \"setor\": \"Vestuario\",\n  \"tamanho\": \"G\",\n  \"preco\": 24.90\n}"
+      },
+      "metaSortKey": -7
+    },
+    {
+      "_id": "req_05_patch",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "5 - PATCH (atualizacao parcial)",
+      "description": "Atualiza SOMENTE os campos enviados. Os demais sao preservados. 200 OK.",
+      "method": "PATCH",
+      "url": "{{ base_url }}/mercado/{{ id_exemplo }}",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"preco\": 15.50\n}"
+      },
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_06_delete",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "6 - DELETE (remover)",
+      "description": "Remove o item pelo id. 204 No Content.",
+      "method": "DELETE",
+      "url": "{{ base_url }}/mercado/{{ id_exemplo }}",
+      "headers": [
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {},
+      "metaSortKey": -5
+    },
+    {
+      "_id": "req_07_erro_validacao",
+      "_type": "request",
+      "parentId": "wrk_mercadoexpress",
+      "name": "7 - POST invalido (demonstra o 400)",
+      "description": "Payload sem nome e com preco negativo: 400 Bad Request com a lista de campos invalidos.",
+      "method": "POST",
+      "url": "{{ base_url }}/mercado",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"\",\n  \"tipo\": \"Fruta\",\n  \"setor\": \"Hortifruti\",\n  \"tamanho\": \"1kg\",\n  \"preco\": -5\n}"
+      },
+      "metaSortKey": -4
+    }
+  ]
+}
