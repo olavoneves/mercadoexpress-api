@@ -2,14 +2,14 @@ FIAP - Curso de Tecnologia em Análise e Desenvolvimento de Sistemas (TDS)
 Checkpoint 4 - Parte I (API e Deploy)
 Professor: Dr. Marcel Stefan Wagner
 
-Turma: [PREENCHER]
+Turma: 2TDSR
 Curso: Análise e Desenvolvimento de Sistemas (TDS)
 
 INTEGRANTES:
-Nome: Olavo Neves        RM: [PREENCHER]
-Nome: [PREENCHER]        RM: [PREENCHER]
-Nome: [PREENCHER]        RM: [PREENCHER]
+Nome: Olavo Porto Neves        RM: 563558
+Nome: Pedro Henrique França    RM: 561940
+Nome: Luiz Gonçalves           RM: 564495
 
-Repositório GitHub: [PREENCHER LINK]
-Link do Deploy: [PREENCHER LINK]
+Repositório GitHub: https://github.com/olavoneves/mercadoexpress-api
+Link do Deploy: https://mercadoexpress-api.onrender.com
 IDE utilizada: IntelliJ IDEA

@@ -24,6 +24,18 @@
       "metaSortKey": 1
     },
     {
+      "_id": "env_mercadoexpress_deploy",
+      "_type": "environment",
+      "parentId": "env_mercadoexpress",
+      "name": "Deploy (Render)",
+      "data": {
+        "base_url": "https://mercadoexpress-api.onrender.com",
+        "id_exemplo": 1
+      },
+      "isPrivate": false,
+      "metaSortKey": 2
+    },
+    {
       "_id": "req_01_get_all",
       "_type": "request",
       "parentId": "wrk_mercadoexpress",
@@ -65,7 +77,7 @@
       ],
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"nome\": \"Sabao em Po Concentrado\",\n  \"tipo\": \"Produto de Limpeza\",\n  \"setor\": \"Limpeza\",\n  \"tamanho\": \"1kg\",\n  \"preco\": 18.90\n}"
+        "text": "{\n  \"nome\": \"Sabao em Po Concentrado\",\n  \"tipo\": \"Limpeza\",\n  \"setor\": \"Higiene e Limpeza\",\n  \"tamanho\": \"1kg\",\n  \"preco\": 18.90\n}"
       },
       "metaSortKey": -8
     },
@@ -83,7 +95,7 @@
       ],
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"nome\": \"Meia Cano Alto Esportiva\",\n  \"tipo\": \"Meia\",\n  \"setor\": \"Vestuario\",\n  \"tamanho\": \"G\",\n  \"preco\": 24.90\n}"
+        "text": "{\n  \"nome\": \"Meia Cano Alto Esportiva\",\n  \"tipo\": \"Vestuario\",\n  \"setor\": \"Bazar\",\n  \"tamanho\": \"G\",\n  \"preco\": 24.90\n}"
       },
       "metaSortKey": -7
     },

@@ -17,11 +17,11 @@ services:
       - key: PORT
         value: 8082
 
-      # Perfil ativo:
-      #   dev   -> H2 em memoria (usar quando o Oracle da FIAP bloquear IP externo)
-      #   vazio -> Oracle da FIAP
+      # Perfil ativo (definido no painel):
+      #   vazio -> Oracle da FIAP (configuracao usada no deploy atual)
+      #   dev   -> H2 em memoria (fallback, caso o Oracle bloqueie o IP externo)
       - key: SPRING_PROFILES_ACTIVE
-        value: dev
+        sync: false
 
       # Credenciais do Oracle - preencher no painel (Environment), nunca aqui
       - key: DB_URL

@@ -2,13 +2,16 @@
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
-![Oracle](https://img.shields.io/badge/Oracle-Database-F80000?style=for-the-badge&logo=oracle&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle-19c-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![HATEOAS](https://img.shields.io/badge/HATEOAS-N%C3%ADvel%203-blue?style=for-the-badge)
+[![Deploy](https://img.shields.io/badge/Deploy-Online-success?style=for-the-badge&logo=render&logoColor=white)](https://mercadoexpress-api.onrender.com/mercado)
 
 API REST desenvolvida para o **Checkpoint 4 – Parte I** da disciplina de Java
-(FIAP – Curso de Tecnologia em Análise e Desenvolvimento de Sistemas),
+(FIAP – Curso de Tecnologia em Análise e Desenvolvimento de Sistemas – **Turma 2TDSR**),
 sob orientação do **Prof. Dr. Marcel Stefan Wagner**.
+
+🌐 **API no ar:** <https://mercadoexpress-api.onrender.com/mercado>
 
 ---
 
@@ -43,15 +46,20 @@ Cada item guarda:
 |-----------|--------------|--------------------------------------------------------|
 | `id`      | `Long`       | Identificador único, gerado pela sequence Oracle       |
 | `nome`    | `String`     | Nome comercial do produto                              |
-| `tipo`    | `String`     | Tipo/categoria (Meia, Fruta, Produto de Limpeza...)    |
-| `setor`   | `String`     | Setor do mercado (Vestuário, Hortifruti, Limpeza...)   |
+| `tipo`    | `String`     | Categoria do produto (Vestuário, Limpeza, Fruta...)    |
+| `setor`   | `String`     | Setor do mercado (Bazar, Higiene e Limpeza, Hortifruti)|
 | `tamanho` | `String`     | Tamanho/volume da embalagem (P, M, G, 500ml, 1kg...)   |
 | `preco`   | `BigDecimal` | Preço unitário em reais (nunca negativo)               |
 
-Os dados são persistidos de verdade no **Oracle da FIAP**, na tabela
-`TDS_TB_MERCADO`, com IDs gerados pela sequence `TDS_SQ_MERCADO`.
+Os dados são persistidos de verdade no **Oracle da FIAP** (versão 19c), na tabela
+`TDS_TB_MERCADO`, com IDs gerados pela sequence `TDS_SQ_MERCADO` — tanto na execução
+local quanto no ambiente publicado.
 
-<!-- [SUBSTITUIR] Print do Spring Initializr com as dependências selecionadas (Spring Web, Spring Data JPA, Lombok, Spring HATEOAS, Oracle Driver, Validation) -->
+### Projeto gerado no Spring Initializr
+
+Maven · Java 21 · Spring Boot 4.1.0 · `br.com.fiap.mercadoexpress`, com as dependências
+**Spring Web, Spring Data JPA, Lombok, Spring HATEOAS, Oracle Driver, Validation** e DevTools:
+
 ![Configuração do Spring Initializr](docs/01-spring-initializr.png)
 
 ---
@@ -67,10 +75,10 @@ Os dados são persistidos de verdade no **Oracle da FIAP**, na tabela
 | Spring HATEOAS        | —        | `_links` nas respostas (nível 3 de Richardson)            |
 | Bean Validation       | —        | Validação dos DTOs (`@NotBlank`, `@PositiveOrZero`...)    |
 | Lombok                | —        | Elimina boilerplate nos modelos e DTOs                    |
-| Oracle JDBC (ojdbc11) | —        | Driver do banco da FIAP                                   |
-| H2 Database           | —        | Banco em memória do perfil `dev` (testes e fallback)      |
+| Oracle JDBC (ojdbc11) | —        | Driver do banco da FIAP (Oracle 19c)                      |
+| H2 Database           | —        | Banco em memória do perfil `dev` (testes sem VPN)         |
 | Maven                 | 3.9      | Build e gerenciamento de dependências                     |
-| Docker                | —        | Empacotamento para o deploy no Render                     |
+| Docker                | —        | Empacotamento da imagem publicada no Render               |
 
 ---
 
@@ -83,12 +91,12 @@ com os links do HATEOAS.
 
 ```mermaid
 flowchart LR
-    Cliente["🧑‍💻 Cliente<br/>(Insomnia / Browser / Front-end)"]
+    Cliente["🧑‍💻 Cliente<br/>(Postman / Insomnia / Browser)"]
     Controller["🎯 MercadoController<br/>@RestController — /mercado"]
     Assembler["🔗 MercadoModelAssembler<br/>EntityModel + CollectionModel"]
     Service["⚙️ MercadoService<br/>@Service — regras de negócio"]
     Repository["🗄️ MercadoRepository<br/>JpaRepository&lt;Mercado, Long&gt;"]
-    Oracle[("🛢️ Oracle FIAP<br/>TDS_TB_MERCADO<br/>TDS_SQ_MERCADO")]
+    Oracle[("🛢️ Oracle FIAP 19c<br/>TDS_TB_MERCADO<br/>TDS_SQ_MERCADO")]
     Handler["🚨 GlobalExceptionHandler<br/>@RestControllerAdvice"]
 
     Cliente -->|"HTTP + JSON"| Controller
@@ -148,7 +156,7 @@ mercado-express-api
 - **Maven** (ou use o wrapper `./mvnw` já incluso)
 - Acesso ao **Oracle da FIAP** (usuário RM e senha) — ou use o perfil `dev` com H2
 - **SQL Developer** (ou similar) para executar o script do banco
-- **Insomnia** ou **Postman** para testar os endpoints
+- **Postman** ou **Insomnia** para testar os endpoints
 
 ---
 
@@ -170,14 +178,16 @@ Abra o **SQL Developer**, conecte com o seu usuário RM e execute o arquivo
 2. `CREATE TABLE TDS_TB_MERCADO` com **PK** e **CHECK (PRECO >= 0)**;
 3. `CREATE SEQUENCE TDS_SQ_MERCADO`;
 4. três `INSERT`s de exemplo (um de cada setor) usando `NEXTVAL`;
-5. `COMMIT`.
+5. `COMMIT` e um `SELECT` de conferência.
 
-<!-- [SUBSTITUIR] Print do SQL Developer mostrando a tabela TDS_TB_MERCADO criada e o SELECT com os 3 registros -->
+Resultado no SQL Developer — tabela e sequence criadas, 3 linhas inseridas e commitadas:
+
 ![Tabela criada no SQL Developer](docs/02-tabela-oracle.png)
 
 ### 3. Configurar as credenciais
 
-As credenciais **nunca** ficam no código. Copie o `.env.example` para `.env` e preencha:
+As credenciais **nunca** ficam no código nem no repositório. Copie o `.env.example`
+para `.env` (que está no `.gitignore`) e preencha:
 
 ```bash
 cp .env.example .env
@@ -185,7 +195,7 @@ cp .env.example .env
 
 ```properties
 DB_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
-DB_USER=rm550000
+DB_USER=RM563558
 DB_PASSWORD=sua_senha
 ```
 
@@ -193,13 +203,13 @@ Depois exporte as variáveis antes de subir a aplicação:
 
 **Windows (PowerShell):**
 ```powershell
-$env:DB_USER = "rm550000"
+$env:DB_USER = "RM563558"
 $env:DB_PASSWORD = "sua_senha"
 ```
 
 **Linux / macOS:**
 ```bash
-export DB_USER=rm550000
+export DB_USER=RM563558
 export DB_PASSWORD=sua_senha
 ```
 
@@ -219,9 +229,9 @@ Ou, direto pelo Maven:
 ./mvnw spring-boot:run
 ```
 
-A API sobe em **http://localhost:8082/mercado**.
+A API sobe em **http://localhost:8082/mercado**. No console é possível confirmar o
+dialeto `OracleDialect`, o banco **Oracle 19.0** e o `Tomcat started on port 8082`:
 
-<!-- [SUBSTITUIR] Print do console/IntelliJ mostrando "Tomcat started on port 8082" -->
 ![Aplicação rodando na porta 8082](docs/03-aplicacao-porta-8082.png)
 
 ### 5. (Opcional) Rodar sem Oracle, com o perfil `dev`
@@ -238,8 +248,9 @@ Console do H2: <http://localhost:8082/h2-console> (JDBC URL `jdbc:h2:mem:mercado
 ### 6. Testar
 
 Importe o arquivo [`insomnia_collection.json`](insomnia_collection.json) no Insomnia
-(*Application → Preferences → Data → Import Data*). A collection já vem com os
-6 requests apontando para `http://localhost:8082/mercado`.
+ou no Postman. A collection já vem com os 6 requests do CRUD e dois ambientes:
+`Base Environment` (`http://localhost:8082`) e `Deploy (Render)`
+(`https://mercadoexpress-api.onrender.com`).
 
 ---
 
@@ -261,9 +272,9 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
 
 ### Perfil `dev` — H2 em memória (`application-dev.properties`)
 
-Existe por dois motivos: permitir desenvolvimento/teste sem VPN da FIAP e servir de
-**fallback do deploy**, já que o Oracle da FIAP costuma recusar conexões vindas de IPs
-externos (como os do Render).
+Existe para permitir desenvolvimento e testes sem acesso à rede da FIAP, replicando a
+mesma estrutura e a mesma massa de dados do Oracle. **Não é o perfil usado no deploy** —
+o ambiente publicado roda no Oracle real (veja a seção [Deploy](#-deploy)).
 
 ### Geração de ID
 
@@ -279,6 +290,7 @@ private Long id;
 ## 🌐 Tabela de endpoints
 
 Base URL local: `http://localhost:8082`
+Base URL do deploy: `https://mercadoexpress-api.onrender.com`
 
 | Método   | Rota            | Descrição                                            | Status de sucesso |
 |----------|-----------------|------------------------------------------------------|-------------------|
@@ -296,6 +308,9 @@ Erros possíveis: `400 Bad Request` (validação), `404 Not Found` (id inexisten
 
 ## 🔄 CRUD detalhado
 
+> Os JSONs abaixo são respostas reais da API publicada, com os dados que estão
+> gravados na tabela `TDS_TB_MERCADO` do Oracle da FIAP.
+
 ### 1️⃣ GET `/mercado` — listar todos
 
 Retorna a coleção completa. A resposta é um `CollectionModel`: cada item vem com os
@@ -303,7 +318,7 @@ seus próprios `_links` e a coleção ganha os links de navegação e criação.
 
 **Request**
 ```http
-GET http://localhost:8082/mercado
+GET https://mercadoexpress-api.onrender.com/mercado
 Accept: application/json
 ```
 
@@ -314,41 +329,41 @@ Accept: application/json
     "mercadoResponseDTOList": [
       {
         "_links": {
-          "self":   { "href": "http://localhost:8082/mercado/1" },
-          "all":    { "href": "http://localhost:8082/mercado" },
-          "update": { "href": "http://localhost:8082/mercado/1" },
-          "patch":  { "href": "http://localhost:8082/mercado/1" },
-          "delete": { "href": "http://localhost:8082/mercado/1" }
+          "self":   { "href": "https://mercadoexpress-api.onrender.com/mercado/1" },
+          "all":    { "href": "https://mercadoexpress-api.onrender.com/mercado" },
+          "update": { "href": "https://mercadoexpress-api.onrender.com/mercado/1" },
+          "patch":  { "href": "https://mercadoexpress-api.onrender.com/mercado/1" },
+          "delete": { "href": "https://mercadoexpress-api.onrender.com/mercado/1" }
         },
         "id": 1,
-        "nome": "Meia Cano Alto Algodao",
-        "tipo": "Meia",
-        "setor": "Vestuario",
+        "nome": "Meia Esportiva Algodao",
+        "tipo": "Vestuario",
+        "setor": "Bazar",
         "tamanho": "M",
-        "preco": 19.90
+        "preco": 19.9
       },
       {
         "_links": {
-          "self":   { "href": "http://localhost:8082/mercado/2" },
-          "all":    { "href": "http://localhost:8082/mercado" },
-          "update": { "href": "http://localhost:8082/mercado/2" },
-          "patch":  { "href": "http://localhost:8082/mercado/2" },
-          "delete": { "href": "http://localhost:8082/mercado/2" }
+          "self":   { "href": "https://mercadoexpress-api.onrender.com/mercado/2" },
+          "all":    { "href": "https://mercadoexpress-api.onrender.com/mercado" },
+          "update": { "href": "https://mercadoexpress-api.onrender.com/mercado/2" },
+          "patch":  { "href": "https://mercadoexpress-api.onrender.com/mercado/2" },
+          "delete": { "href": "https://mercadoexpress-api.onrender.com/mercado/2" }
         },
         "id": 2,
         "nome": "Detergente Neutro",
-        "tipo": "Produto de Limpeza",
-        "setor": "Limpeza",
+        "tipo": "Limpeza",
+        "setor": "Higiene e Limpeza",
         "tamanho": "500ml",
         "preco": 3.49
       },
       {
         "_links": {
-          "self":   { "href": "http://localhost:8082/mercado/3" },
-          "all":    { "href": "http://localhost:8082/mercado" },
-          "update": { "href": "http://localhost:8082/mercado/3" },
-          "patch":  { "href": "http://localhost:8082/mercado/3" },
-          "delete": { "href": "http://localhost:8082/mercado/3" }
+          "self":   { "href": "https://mercadoexpress-api.onrender.com/mercado/3" },
+          "all":    { "href": "https://mercadoexpress-api.onrender.com/mercado" },
+          "update": { "href": "https://mercadoexpress-api.onrender.com/mercado/3" },
+          "patch":  { "href": "https://mercadoexpress-api.onrender.com/mercado/3" },
+          "delete": { "href": "https://mercadoexpress-api.onrender.com/mercado/3" }
         },
         "id": 3,
         "nome": "Banana Prata",
@@ -360,14 +375,15 @@ Accept: application/json
     ]
   },
   "_links": {
-    "self":   { "href": "http://localhost:8082/mercado" },
-    "all":    { "href": "http://localhost:8082/mercado" },
-    "create": { "href": "http://localhost:8082/mercado" }
+    "self":   { "href": "https://mercadoexpress-api.onrender.com/mercado" },
+    "all":    { "href": "https://mercadoexpress-api.onrender.com/mercado" },
+    "create": { "href": "https://mercadoexpress-api.onrender.com/mercado" }
   }
 }
 ```
 
-<!-- [SUBSTITUIR] Print do GET /mercado no Insomnia mostrando request + response 200 com a lista e os _links -->
+Print do `GET /mercado` no Postman — `200 OK` com a coleção e os `_links` de cada item:
+
 ![GET /mercado](docs/04-get-all.png)
 
 ---
@@ -393,15 +409,15 @@ Accept: application/json
     "delete": { "href": "http://localhost:8082/mercado/1" }
   },
   "id": 1,
-  "nome": "Meia Cano Alto Algodao",
-  "tipo": "Meia",
-  "setor": "Vestuario",
+  "nome": "Meia Esportiva Algodao",
+  "tipo": "Vestuario",
+  "setor": "Bazar",
   "tamanho": "M",
-  "preco": 19.90
+  "preco": 19.9
 }
 ```
 
-<!-- [SUBSTITUIR] Print do GET /mercado/1 no Insomnia mostrando request + response 200 -->
+<!-- [SUBSTITUIR] Print do GET /mercado/1 no Postman mostrando request + response 200 -->
 ![GET /mercado/{id}](docs/05-get-by-id.png)
 
 ---
@@ -420,8 +436,8 @@ Content-Type: application/json
 ```json
 {
   "nome": "Sabao em Po Concentrado",
-  "tipo": "Produto de Limpeza",
-  "setor": "Limpeza",
+  "tipo": "Limpeza",
+  "setor": "Higiene e Limpeza",
   "tamanho": "1kg",
   "preco": 18.90
 }
@@ -443,14 +459,14 @@ Content-Type: application/hal+json
   },
   "id": 4,
   "nome": "Sabao em Po Concentrado",
-  "tipo": "Produto de Limpeza",
-  "setor": "Limpeza",
+  "tipo": "Limpeza",
+  "setor": "Higiene e Limpeza",
   "tamanho": "1kg",
   "preco": 18.90
 }
 ```
 
-<!-- [SUBSTITUIR] Print do POST no Insomnia mostrando request + response 201 (destacar o header Location) -->
+<!-- [SUBSTITUIR] Print do POST no Postman mostrando request + response 201 (destacar o header Location na aba Headers) -->
 ![POST /mercado](docs/06-post.png)
 
 ---
@@ -468,8 +484,8 @@ Content-Type: application/json
 ```json
 {
   "nome": "Sabao em Po Premium",
-  "tipo": "Produto de Limpeza",
-  "setor": "Limpeza",
+  "tipo": "Limpeza",
+  "setor": "Higiene e Limpeza",
   "tamanho": "2kg",
   "preco": 29.90
 }
@@ -487,14 +503,14 @@ Content-Type: application/json
   },
   "id": 4,
   "nome": "Sabao em Po Premium",
-  "tipo": "Produto de Limpeza",
-  "setor": "Limpeza",
+  "tipo": "Limpeza",
+  "setor": "Higiene e Limpeza",
   "tamanho": "2kg",
   "preco": 29.90
 }
 ```
 
-<!-- [SUBSTITUIR] Print do PUT no Insomnia mostrando request + response 200 com o item alterado -->
+<!-- [SUBSTITUIR] Print do PUT no Postman mostrando request + response 200 com o item alterado -->
 ![PUT /mercado/{id}](docs/07-put.png)
 
 ---
@@ -527,14 +543,14 @@ Content-Type: application/json
   },
   "id": 4,
   "nome": "Sabao em Po Premium",
-  "tipo": "Produto de Limpeza",
-  "setor": "Limpeza",
+  "tipo": "Limpeza",
+  "setor": "Higiene e Limpeza",
   "tamanho": "2kg",
   "preco": 15.50
 }
 ```
 
-<!-- [SUBSTITUIR] Print do PATCH no Insomnia mostrando que só o preço mudou (response 200) -->
+<!-- [SUBSTITUIR] Print do PATCH no Postman mostrando que só o preço mudou (response 200) -->
 ![PATCH /mercado/{id}](docs/08-patch.png)
 
 ---
@@ -562,7 +578,7 @@ DELETE http://localhost:8082/mercado/4
 }
 ```
 
-<!-- [SUBSTITUIR] Print do DELETE no Insomnia mostrando o status 204 No Content -->
+<!-- [SUBSTITUIR] Print do DELETE no Postman mostrando o status 204 No Content -->
 ![DELETE /mercado/{id}](docs/09-delete.png)
 
 ---
@@ -593,6 +609,11 @@ Isso deixa a API **auto-descritiva** e **desacoplada**: se amanhã a rota mudar 
 `/mercado/{id}` para `/api/v2/mercado/{id}`, o cliente que navega pelos links continua
 funcionando sem alteração de código. É a mesma ideia da web — você não digita a URL de
 cada página, você segue os links que ela oferece.
+
+Repare também que os links se adaptam sozinhos ao ambiente: rodando local eles saem como
+`http://localhost:8082/...` e, no deploy, como `https://mercadoexpress-api.onrender.com/...`
+(compare os prints do GET all). Isso acontece porque as URLs são derivadas da própria
+requisição, não escritas na mão.
 
 ### Como foi implementado
 
@@ -654,57 +675,52 @@ Centralizado no `GlobalExceptionHandler` (`@RestControllerAdvice`), com corpo de
 
 ## 🚀 Deploy
 
-**Link do deploy:** <!-- [SUBSTITUIR] --> `[PREENCHER LINK DO DEPLOY]`
+### 🔗 Link do deploy: <https://mercadoexpress-api.onrender.com/mercado>
 
-<!-- [SUBSTITUIR] Print do serviço no ar (navegador acessando <url-do-deploy>/mercado com o JSON e os _links) -->
+A API está publicada no **Render**, em container **Docker**, e **conectada ao Oracle da
+FIAP** — ou seja, os dados que o deploy devolve são os mesmos registros gravados na
+tabela `TDS_TB_MERCADO`. Nos logs do serviço aparece
+`No active profile set, falling back to 1 default profile: "default"`, confirmando que o
+ambiente publicado roda no perfil padrão (Oracle), e não no H2.
+
+Serviço no ar no painel do Render, com o build **Live** e o log de inicialização do Spring Boot 4.1.0:
+
 ![Deploy no ar](docs/10-deploy.png)
 
-### Plataforma: Render (Docker)
+### Como o deploy foi feito (passo a passo)
 
-O projeto já vem com [`Dockerfile`](Dockerfile) multi-stage
+O projeto traz o [`Dockerfile`](Dockerfile) multi-stage
 (`maven:3.9-eclipse-temurin-21` para o build → `eclipse-temurin:21-jre` para o runtime)
-e com o blueprint [`render.yaml`](render.yaml).
+e o blueprint [`render.yaml`](render.yaml).
 
-### Passo a passo
-
-1. Faça o push do projeto para o GitHub (o `Dockerfile` e o `render.yaml` precisam estar na raiz).
-2. Acesse <https://render.com>, crie a conta e clique em **New → Blueprint**
-   (ou **New → Web Service** e selecione *Docker* como runtime).
-3. Conecte o repositório `mercadoexpress-api` e confirme — o Render lê o `render.yaml`
-   e já configura nome, runtime Docker, plano free e health check em `/mercado`.
-4. Em **Environment**, preencha as variáveis marcadas como `sync: false`:
+1. Push do projeto para o GitHub (o `Dockerfile` e o `render.yaml` na raiz).
+2. Em <https://render.com>: **New → Web Service**, conectando o repositório
+   `olavoneves/mercadoexpress-api` (branch `main`) e escolhendo o runtime **Docker**.
+3. Em **Environment**, cadastrar as variáveis — nenhuma credencial vai para o repositório:
 
    | Variável                 | Valor                                                       |
    |--------------------------|-------------------------------------------------------------|
    | `PORT`                   | `8082`                                                      |
-   | `SPRING_PROFILES_ACTIVE` | `dev` (H2) **ou** vazio (Oracle)                            |
    | `DB_URL`                 | `jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL`            |
-   | `DB_USER`                | seu RM                                                      |
-   | `DB_PASSWORD`            | sua senha                                                   |
+   | `DB_USER`                | RM do integrante                                            |
+   | `DB_PASSWORD`            | senha do Oracle                                             |
+   | `SPRING_PROFILES_ACTIVE` | *(vazio — usa o Oracle)*                                    |
 
-5. Clique em **Apply / Create Web Service** e aguarde o build (~5 min na primeira vez).
-6. A URL pública aparece no topo do painel. Teste com:
-   `https://mercado-express-api.onrender.com/mercado`
+4. **Create Web Service** e aguardar o build (~5 min na primeira vez).
+   Com `autoDeploy` ligado, todo push na `main` republica a API automaticamente.
+5. Testar: <https://mercadoexpress-api.onrender.com/mercado>
 
-> ⚠️ **Plano free do Render:** o serviço hiberna após ~15 minutos sem tráfego. A primeira
-> requisição depois disso pode levar até 1 minuto para responder. Acesse a URL alguns
-> minutos antes da apresentação para "acordar" a instância.
+> ⚠️ **Plano free do Render:** o serviço hiberna após ~15 minutos sem tráfego, e a primeira
+> requisição depois disso pode levar **até 50 segundos** para responder (o próprio painel
+> avisa isso). Acesse a URL alguns minutos antes da apresentação para "acordar" a instância.
 
-### 🔐 Sobre o Oracle da FIAP no deploy
+### Plano B — perfil `dev` (H2)
 
-O banco `oracle.fiap.com.br` normalmente **só aceita conexões da rede da FIAP**, recusando
-os IPs externos da nuvem do Render. Por isso o `render.yaml` já sobe com
-`SPRING_PROFILES_ACTIVE=dev`:
-
-- **Deploy (Render)** → perfil `dev`, com **H2 em memória** e a mesma massa de teste;
-  a API se comporta exatamente igual, inclusive nos `_links` do HATEOAS.
-- **Local (avaliação)** → perfil padrão, com **persistência real no Oracle da FIAP**,
-  na tabela `TDS_TB_MERCADO` e sequence `TDS_SQ_MERCADO`, conforme o print da seção
-  [Configuração do banco de dados](#-configuração-do-banco-de-dados).
-
-Se o Oracle aceitar a conexão externa, basta apagar o valor de `SPRING_PROFILES_ACTIVE`
-no painel do Render e preencher `DB_URL`, `DB_USER` e `DB_PASSWORD` para o deploy passar
-a usar o Oracle.
+Caso o Oracle da FIAP passe a recusar conexões vindas do IP da nuvem, basta definir
+`SPRING_PROFILES_ACTIVE=dev` no painel do Render: a API sobe com **H2 em memória**,
+já populado com a mesma massa de teste, e se comporta exatamente igual — inclusive
+nos `_links` do HATEOAS. **Não foi necessário usar esse fallback**: o deploy atual está
+persistindo no Oracle real.
 
 ---
 
@@ -716,16 +732,18 @@ a usar o Oracle.
 
 ## 👥 Integrantes
 
-| Nome           | RM             |
-|----------------|----------------|
-| Olavo Neves    | `[PREENCHER]`  |
-| `[PREENCHER]`  | `[PREENCHER]`  |
-| `[PREENCHER]`  | `[PREENCHER]`  |
+| Nome                    | RM       |
+|-------------------------|----------|
+| Olavo Porto Neves       | 563558   |
+| Pedro Henrique França   | 561940   |
+| Luiz Gonçalves          | 564495   |
 
-**Turma:** `[PREENCHER]`
+**Turma:** 2TDSR
 **Curso:** Análise e Desenvolvimento de Sistemas (TDS) – FIAP
 **Disciplina:** Java – Checkpoint 4, Parte I
 **Professor:** Dr. Marcel Stefan Wagner
+**Repositório:** <https://github.com/olavoneves/mercadoexpress-api>
+**Deploy:** <https://mercadoexpress-api.onrender.com/mercado>
 
 ---
 
