@@ -26,11 +26,11 @@ public class MercadoRequestDTO {
     private String nome;
 
     @NotBlank(message = "O tipo do produto e obrigatorio")
-    @Size(max = 60, message = "O tipo deve ter no maximo 60 caracteres")
+    @Size(max = 50, message = "O tipo deve ter no maximo 50 caracteres")
     private String tipo;
 
     @NotBlank(message = "O setor do produto e obrigatorio")
-    @Size(max = 60, message = "O setor deve ter no maximo 60 caracteres")
+    @Size(max = 50, message = "O setor deve ter no maximo 50 caracteres")
     private String setor;
 
     @Size(max = 30, message = "O tamanho deve ter no maximo 30 caracteres")

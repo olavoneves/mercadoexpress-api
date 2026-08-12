@@ -23,10 +23,10 @@ public class MercadoPatchDTO {
     @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
     private String nome;
 
-    @Size(max = 60, message = "O tipo deve ter no maximo 60 caracteres")
+    @Size(max = 50, message = "O tipo deve ter no maximo 50 caracteres")
     private String tipo;
 
-    @Size(max = 60, message = "O setor deve ter no maximo 60 caracteres")
+    @Size(max = 50, message = "O setor deve ter no maximo 50 caracteres")
     private String setor;
 
     @Size(max = 30, message = "O tamanho deve ter no maximo 30 caracteres")

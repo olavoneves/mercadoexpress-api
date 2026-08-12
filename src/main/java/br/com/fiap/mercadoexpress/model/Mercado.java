@@ -35,10 +35,10 @@ public class Mercado {
     @Column(name = "NOME", nullable = false, length = 100)
     private String nome;
 
-    @Column(name = "TIPO", nullable = false, length = 60)
+    @Column(name = "TIPO", nullable = false, length = 50)
     private String tipo;
 
-    @Column(name = "SETOR", nullable = false, length = 60)
+    @Column(name = "SETOR", nullable = false, length = 50)
     private String setor;
 
     @Column(name = "TAMANHO", length = 30)
